@@ -1,0 +1,4 @@
+embed_dim: 64
+negative_count: 10
+dropout_rate: 0.3
+gpu: [7]
