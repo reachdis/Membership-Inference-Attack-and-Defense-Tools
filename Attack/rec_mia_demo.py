@@ -11,20 +11,26 @@ project's unified `AttackInput -> AttackOutput` interface.
 
 Run examples
 ------------
-python rec_mia_demo.py
-python rec_mia_demo.py --method me
-python rec_mia_demo.py --method biased
-python rec_mia_demo.py --method dl
+python Attack/rec_mia_demo.py
+python Attack/rec_mia_demo.py --method me
+python Attack/rec_mia_demo.py --method biased
+python Attack/rec_mia_demo.py --method dl
 """
 
 from __future__ import annotations
 
 import argparse
 import random
+import sys
+from pathlib import Path
 from typing import Dict, Tuple
 
 import numpy as np
 import torch
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from Attack.biased_mia import BiasedMIAAttack
 from Attack.dl_mia import DLMIAAttack

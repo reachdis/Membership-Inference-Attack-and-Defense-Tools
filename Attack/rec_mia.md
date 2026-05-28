@@ -18,9 +18,9 @@
 
 对应实现文件：
 
-- [Attack/me_mia.py](./Attack/me_mia.py)
-- [Attack/biased_mia.py](./Attack/biased_mia.py)
-- [Attack/dl_mia.py](./Attack/dl_mia.py)
+- [me_mia.py](./me_mia.py)
+- [biased_mia.py](./biased_mia.py)
+- [dl_mia.py](./dl_mia.py)
 
 ---
 
@@ -102,7 +102,7 @@ attack_output = attack.run(attack_input)
 
 `ME-MIA` 是“接口层重写 + 原始打分逻辑复用”的模式：
 
-- 统一接口层在 [Attack/me_mia.py](./Attack/me_mia.py)
+- 统一接口层在 [me_mia.py](./me_mia.py)
 - 如果输入已经是 `score_dict`，直接在接口层训练/推理
 - 如果输入是 `target_model/shadow_model + datasets`，内部会调用原始 `Attack/utils_memia/RecStudio/utils.py` 的 `score()`
 
@@ -202,7 +202,7 @@ output = attack.run(attack_input)
 
 ### 6.1 当前实现方式
 
-`Biased-MIA` 的统一包装器在 [Attack/biased_mia.py](./Attack/biased_mia.py)。
+`Biased-MIA` 的统一包装器在 [biased_mia.py](./biased_mia.py)。
 
 它内部实现的是原方法最稳定的核心链路：
 
@@ -308,7 +308,7 @@ output = attack.run(attack_input)
 
 ### 7.1 当前实现方式
 
-`DL-MIA` 的统一包装器在 [Attack/dl_mia.py](./Attack/dl_mia.py)。
+`DL-MIA` 的统一包装器在 [dl_mia.py](./dl_mia.py)。
 
 它支持两种层级：
 
@@ -456,8 +456,8 @@ output = attack.run(attack_input)
 运行方式：
 
 ```bash
-python rec_mia_demo.py
-python rec_mia_demo.py --method me
-python rec_mia_demo.py --method biased
-python rec_mia_demo.py --method dl
+python Attack/rec_mia_demo.py
+python Attack/rec_mia_demo.py --method me
+python Attack/rec_mia_demo.py --method biased
+python Attack/rec_mia_demo.py --method dl
 ```
