@@ -1,0 +1,8 @@
+embed_dim: 64
+hidden_size: 128
+dropout_rate: 0.2 
+layer_num: 1
+negative_count: 20
+
+gpu: [2]
+

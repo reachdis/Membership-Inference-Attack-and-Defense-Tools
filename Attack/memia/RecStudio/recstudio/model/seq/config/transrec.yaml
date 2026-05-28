@@ -1,0 +1,4 @@
+embeded_dim: 64
+negative_count: 10
+
+gpu: [7]
