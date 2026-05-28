@@ -730,7 +730,7 @@ class MEMIAAttack(BaseAttack):
 
 @lru_cache(maxsize=1)
 def _load_memia_score_function():
-    recstudio_root = Path(__file__).resolve().parent / "memia" / "RecStudio"
+    recstudio_root = Path(__file__).resolve().parent / "utils_memia" / "RecStudio"
     if not recstudio_root.exists():
         raise FileNotFoundError(f"ME-MIA RecStudio directory not found: {recstudio_root}")
 

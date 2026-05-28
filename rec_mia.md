@@ -38,7 +38,7 @@
 pip install numpy torch scikit-learn
 ```
 
-如果你要让 `ME-MIA` 直接调用原始 `Attack/memia/RecStudio/utils.py` 的 `score()`，还需要满足 `Attack/memia/` 目录对应的额外依赖。
+如果你要让 `ME-MIA` 直接调用原始 `Attack/utils_memia/RecStudio/utils.py` 的 `score()`，还需要满足 `Attack/utils_memia/` 目录对应的额外依赖。
 
 ---
 
@@ -104,7 +104,7 @@ attack_output = attack.run(attack_input)
 
 - 统一接口层在 [Attack/me_mia.py](./Attack/me_mia.py)
 - 如果输入已经是 `score_dict`，直接在接口层训练/推理
-- 如果输入是 `target_model/shadow_model + datasets`，内部会调用原始 `Attack/memia/RecStudio/utils.py` 的 `score()`
+- 如果输入是 `target_model/shadow_model + datasets`，内部会调用原始 `Attack/utils_memia/RecStudio/utils.py` 的 `score()`
 
 ### 5.2 训练输入
 
