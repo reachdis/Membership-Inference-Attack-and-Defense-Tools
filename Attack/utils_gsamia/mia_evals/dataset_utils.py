@@ -125,7 +125,7 @@ class MIAMNIST(torchvision.datasets.MNIST):
         return super(MIAMNIST, self).__getitem__(item)
 
 
-def load_member_data(dataset_root, dataset_name, batch_size=128, member_split_root='./mia_evals/member_splits/', shuffle=False, randaugment=False):
+def load_member_data(dataset_root, dataset_name, batch_size=128, member_split_root='./Attack/utils_gsamia/mia_evals/member_splits/', shuffle=False, randaugment=False):
     if dataset_name.upper() == 'CIFAR10':
         splits = np.load(member_split_root + "CIFAR10_train_ratio0.5.npz")
         member_idxs = splits['mia_train_idxs']

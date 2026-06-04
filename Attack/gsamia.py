@@ -398,8 +398,8 @@ class GSAMIAAttack(BaseAttack):
         flags_obj: SimpleNamespace,
     ) -> np.ndarray:
         output_name = (
-            self.runtime_config.get("output_name")
-            or metadata.get("output_name")
+            metadata.get("output_name")
+            or self.runtime_config.get("output_name")
             or self.output_name
         )
         _GSAMIA_UTILS.args = SimpleNamespace(output_name=output_name)
