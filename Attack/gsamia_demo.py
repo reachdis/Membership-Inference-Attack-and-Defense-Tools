@@ -47,14 +47,23 @@ K = 3
 NUM_T_GROUPS = 5
 SPARSITY = 0.3
 XGB_N_ESTIMATORS = 200
+USE_CACHED_FEATURES = True
 
 TARGET_OUTPUT_NAME = str(UTILS_GSAMIA_DIR / "gradient_mia" / "GSA1" / "target_feature_DDPM")
 SHADOW_OUTPUT_NAME = str(UTILS_GSAMIA_DIR / "gradient_mia" / "GSA1" / "shadow_feature_DDPM")
 
 
 def build_membership_labels(member_loader: object, nonmember_loader: object) -> np.ndarray:
-    member_size = len(member_loader.dataset) # type: ignore[attr-defined]
-    nonmember_size = len(nonmember_loader.dataset) # type: ignore[attr-defined]
+    """
+    Build labels aligned with the current GSAMIA feature extractor.
+
+    The underlying `utils_gsamia.gsamia.extract_attack_features()` appends one
+    gradient feature vector per dataloader batch, not per raw sample. So the
+    final attack-score length matches `len(loader)` rather than
+    `len(loader.dataset)`.
+    """
+    member_size = len(member_loader) # type: ignore[arg-type]
+    nonmember_size = len(nonmember_loader) # type: ignore[arg-type]
     return np.concatenate(
         [
             np.ones(member_size, dtype=np.int64),
@@ -115,6 +124,7 @@ def main() -> None:
             "num_t_groups": NUM_T_GROUPS,
             "sparsity": SPARSITY,
             "xgb_n_estimators": XGB_N_ESTIMATORS,
+            "use_cached_features": USE_CACHED_FEATURES,
             "output_name": TARGET_OUTPUT_NAME,
         },
         metadata={
@@ -133,6 +143,7 @@ def main() -> None:
         model_type=MODEL_TYPE,
         output_name=TARGET_OUTPUT_NAME,
         xgb_n_estimators=XGB_N_ESTIMATORS,
+        use_cached_features=USE_CACHED_FEATURES,
     )
     output = attack.run(attack_input)
 
@@ -144,6 +155,7 @@ def main() -> None:
     print(f"Dataset: {DATASET}")
     print(f"Attack method: {ATTACK_METHOD}")
     print(f"Sampling frequency: {SAMPLING_FREQUENCY}")
+    print(f"Use cached features: {USE_CACHED_FEATURES}")
     print(f"Total attacked samples: {len(membership_labels)}")
     print(f"Scores shape: {np.asarray(output.membership_scores).shape}")
     if output.evaluation is not None:

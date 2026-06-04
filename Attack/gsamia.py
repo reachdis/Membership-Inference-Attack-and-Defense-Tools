@@ -59,6 +59,7 @@ def _load_flagfile_defaults() -> Dict[str, Any]:
         "sampling_frequency": 10,
         "prediction_type": "epsilon",
         "output_name": "./gradient_mia/interface",
+        "use_cached_features": True,
     }
 
 
@@ -148,6 +149,7 @@ class GSAMIAAttack(BaseAttack):
         model_type: str = "ddpm",
         output_name: str = "./gradient_mia/interface",
         xgb_n_estimators: int = 200,
+        use_cached_features: bool = True,
         device: Optional[str] = None,
     ) -> None:
         self.attack_method = attack_method
@@ -157,6 +159,7 @@ class GSAMIAAttack(BaseAttack):
         self.model_type = model_type
         self.output_name = output_name
         self.xgb_n_estimators = xgb_n_estimators
+        self.use_cached_features = use_cached_features
         self.device = device if device is not None else ("cuda:0" if torch.cuda.is_available() else "cpu")
 
         self.runtime_config: Dict[str, Any] = {}
@@ -218,6 +221,7 @@ class GSAMIAAttack(BaseAttack):
             "model_type": self.model_type,
             "output_name": self.output_name,
             "xgb_n_estimators": self.xgb_n_estimators,
+            "use_cached_features": self.use_cached_features,
         }
         merged.update(config)
         return merged
@@ -402,6 +406,15 @@ class GSAMIAAttack(BaseAttack):
             or self.runtime_config.get("output_name")
             or self.output_name
         )
+        ckpt_name = metadata.get("ckpt_name") or self.runtime_config.get("ckpt_name") or "model"
+        model_name = Path(str(ckpt_name)).stem
+        cache_path = Path(output_name) / membership / f"gradient_{model_name}.pt"
+        use_cached_features = bool(self.runtime_config.get("use_cached_features", self.use_cached_features))
+
+        if use_cached_features and cache_path.exists():
+            cached = torch.load(cache_path, map_location=self.device)
+            return _to_numpy_2d(cached)
+
         _GSAMIA_UTILS.args = SimpleNamespace(output_name=output_name)
         scheduler = DDPMScheduler(
             num_train_timesteps=int(flags_obj.T),
@@ -409,8 +422,6 @@ class GSAMIAAttack(BaseAttack):
             beta_end=float(flags_obj.beta_T),
             prediction_type=str(self.runtime_config["prediction_type"]),
         )
-        ckpt_name = metadata.get("ckpt_name") or self.runtime_config.get("ckpt_name") or "model"
-        model_name = Path(str(ckpt_name)).stem
         features = _GSAMIA_UTILS.extract_attack_features(
             model=model,
             model_name=model_name,
@@ -509,6 +520,7 @@ class GSAMIAAttack(BaseAttack):
             "sampling_frequency": config.get("sampling_frequency"),
             "prediction_type": config.get("prediction_type"),
             "output_name": config.get("output_name") or metadata.get("output_name"),
+            "use_cached_features": config.get("use_cached_features"),
             "T": config.get("T"),
             "beta_1": config.get("beta_1"),
             "beta_T": config.get("beta_T"),
